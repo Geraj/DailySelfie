@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     // array of supported extensions (use a List if you prefer)
     static final String[] EXTENSIONS = new String[]{
-            "gif", "png", "bmp", "jpeg","jpg" // and other formats you need
+            "gif", "png", "bmp", "jpeg", "jpg" // and other formats you need
     };
     public static final String URL = "URL";
     public static final String NAME = "NAME";
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent mNotificationReceiverIntent;
     public static final long INTERVAL_TWO_MINUTES = 2 * 60 * 1000;
     private SelfieViewAdapter selfieViewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,22 +61,22 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SelfieRecord record = (SelfieRecord)selfieViewAdapter.getItem(position);
+                SelfieRecord record = (SelfieRecord) selfieViewAdapter.getItem(position);
                 record.getPhotoUrl();
                 Intent intent = new Intent(MainActivity.this, ShowSelfieActivity.class);
-                intent.putExtra(URL,record.getPhotoUrl());
-                intent.putExtra(NAME,record.getExtraInfo());
+                intent.putExtra(URL, record.getPhotoUrl());
+                intent.putExtra(NAME, record.getExtraInfo());
                 startActivity(intent);
             }
         });
         File dir = new File(getGalleryPath());
         //create directory if not exists
-        if (dir == null || !dir.isDirectory()){
+        if (dir == null || !dir.isDirectory()) {
             dir.mkdirs();
         }
         boolean b = dir.isDirectory();
-        File[] filelist = dir.listFiles(IMAGE_FILTER );
-        if (filelist != null){
+        File[] filelist = dir.listFiles(IMAGE_FILTER);
+        if (filelist != null) {
             for (File f : filelist) { // load files in the directiory
                 Bitmap imageBitmap = BitmapFactory.decodeFile(f.getPath());
                 imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         // Create an Intent to broadcast to the AlarmNotificationReceiver
         mNotificationReceiverIntent = new Intent(MainActivity.this,
-               SelfieAlarmReceiver.class);
+                SelfieAlarmReceiver.class);
         // Create an PendingIntent that holds the NotificationReceiverIntent
         PendingIntent mNotificationReceiverPendingIntent = PendingIntent.getBroadcast(
                 MainActivity.this, 0, mNotificationReceiverIntent, 0);
@@ -105,11 +106,13 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Get path to galery
+     *
      * @return
      */
     private static String getGalleryPath() {
         return Environment.getExternalStorageDirectory() + "/Selfie/";
     }
+
     // filter to identify images based on their extensions
     static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
 
@@ -123,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             return (false);
         }
     };
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -148,12 +152,12 @@ public class MainActivity extends AppCompatActivity {
             try {
                 // save and add file to list
                 Date date = new Date();
-                String name =  "Selfie" + date.getTime() + ".png";
+                String name = "Selfie" + date.getTime() + ".png";
                 out = new FileOutputStream(getGalleryPath() + name);
                 imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                 imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
                 SelfieRecord record = new SelfieRecord();
-                record.setPhotoUrl(getGalleryPath()+name);
+                record.setPhotoUrl(getGalleryPath() + name);
                 record.setExtraInfo(name);
                 record.setPhotoBitMap(imageBitmap);
                 selfieViewAdapter.add(record);
