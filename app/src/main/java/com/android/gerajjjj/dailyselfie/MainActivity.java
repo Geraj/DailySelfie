@@ -32,6 +32,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Created by Gerajjjj on 1/24/2017.
+ */
 public class MainActivity extends AppCompatActivity {
 
     // array of supported extensions (use a List if you prefer)
@@ -40,15 +43,12 @@ public class MainActivity extends AppCompatActivity {
     };
     public static final String URL = "URL";
     public static final String NAME = "NAME";
-    private static String getGalleryPath() {
-        return Environment.getExternalStorageDirectory() + "/" + Environment.DIRECTORY_DCIM + "/";
-    }
+
     static final int REQUEST_IMAGE_CAPTURE = 1;
     final int THUMBNAIL_SIZE = 256;
     private AlarmManager mAlarmManager;
     private Intent mNotificationReceiverIntent;
     public static final long INTERVAL_TWO_MINUTES = 2 * 60 * 1000;
-
     private SelfieViewAdapter selfieViewAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +69,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         File dir = new File(getGalleryPath());
+        //create directory if not exists
+        if (dir == null || !dir.isDirectory()){
+            dir.mkdirs();
+        }
         boolean b = dir.isDirectory();
         File[] filelist = dir.listFiles(IMAGE_FILTER );
         if (filelist != null){
-            for (File f : filelist) { // do your stuff here }
+            for (File f : filelist) { // load files in the directiory
                 Bitmap imageBitmap = BitmapFactory.decodeFile(f.getPath());
                 imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
                 SelfieRecord record = new SelfieRecord();
@@ -94,11 +98,18 @@ public class MainActivity extends AppCompatActivity {
         // Set repeating alarm
         mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + INTERVAL_TWO_MINUTES,
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                INTERVAL_TWO_MINUTES,
                 mNotificationReceiverPendingIntent);
 
     }
 
+    /**
+     * Get path to galery
+     * @return
+     */
+    private static String getGalleryPath() {
+        return Environment.getExternalStorageDirectory() + "/Selfie/";
+    }
     // filter to identify images based on their extensions
     static final FilenameFilter IMAGE_FILTER = new FilenameFilter() {
 
@@ -135,11 +146,11 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             FileOutputStream out = null;
             try {
+                // save and add file to list
                 Date date = new Date();
                 String name =  "Selfie" + date.getTime() + ".png";
                 out = new FileOutputStream(getGalleryPath() + name);
-                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-                // PNG is a lossless format, the compression factor (100) is ignored
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                 imageBitmap = Bitmap.createScaledBitmap(imageBitmap, THUMBNAIL_SIZE, THUMBNAIL_SIZE, false);
                 SelfieRecord record = new SelfieRecord();
                 record.setPhotoUrl(getGalleryPath()+name);

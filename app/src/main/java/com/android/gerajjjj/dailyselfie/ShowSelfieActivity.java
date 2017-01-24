@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.widget.ImageView;
 
 import java.io.File;
-
+/**
+ * Created by Gerajjjj on 1/24/2017.
+ */
 public class ShowSelfieActivity extends AppCompatActivity {
 
     @Override

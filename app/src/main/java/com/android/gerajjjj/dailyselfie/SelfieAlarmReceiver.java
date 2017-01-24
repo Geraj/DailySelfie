@@ -9,11 +9,14 @@ import android.content.Intent;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
+
+
 public class SelfieAlarmReceiver extends BroadcastReceiver {
     public SelfieAlarmReceiver() {
     }
     private final long[] mVibratePattern = { 0, 200, 200, 300 };
     private static final int MY_NOTIFICATION_ID = 1;
+    private static final String SELFIE = "Selfie time";
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
@@ -26,10 +29,10 @@ public class SelfieAlarmReceiver extends BroadcastReceiver {
                 mNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 // Build the Notification
         Notification.Builder notificationBuilder = new Notification.Builder(
-                context).setTicker("Selfie time")
+                context)
                 .setSmallIcon(android.R.drawable.ic_menu_camera)
-                .setAutoCancel(true).setContentTitle("Selfie time!")
-                .setContentText("Selfie time!!").setContentIntent(mContentIntent)
+                .setAutoCancel(true).setContentTitle(SELFIE)
+                .setContentText(SELFIE).setContentIntent(mContentIntent)
                 .setVibrate(mVibratePattern);
         // Get the NotificationManager
         NotificationManager mNotificationManager = (NotificationManager) context
