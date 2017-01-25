@@ -1,21 +1,19 @@
 package com.android.gerajjjj.dailyselfie;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlarmManager;
-import android.app.ListActivity;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,13 +21,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -37,11 +32,11 @@ import java.util.Date;
  */
 public class MainActivity extends AppCompatActivity {
 
-    // array of supported extensions (use a List if you prefer)
+    // array of supported extensions
     static final String[] EXTENSIONS = new String[]{
-            "gif", "png", "bmp", "jpeg", "jpg" // and other formats you need
+            "gif", "png", "bmp", "jpeg", "jpg"
     };
-    public static final String URL = "URL";
+    public static final String PATH = "PATH";
     public static final String NAME = "NAME";
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -49,11 +44,13 @@ public class MainActivity extends AppCompatActivity {
     private AlarmManager mAlarmManager;
     private Intent mNotificationReceiverIntent;
     public static final long INTERVAL_TWO_MINUTES = 2 * 60 * 1000;
+    public static final int MY_PERMISSIONS_REQUEST = 1;
     private SelfieViewAdapter selfieViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestPermissions();
         setContentView(R.layout.activity_main);
         selfieViewAdapter = new SelfieViewAdapter(getApplicationContext());
         ListView listView = (ListView) findViewById(R.id.list_view);
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 SelfieRecord record = (SelfieRecord) selfieViewAdapter.getItem(position);
                 record.getPhotoUrl();
                 Intent intent = new Intent(MainActivity.this, ShowSelfieActivity.class);
-                intent.putExtra(URL, record.getPhotoUrl());
+                intent.putExtra(PATH, record.getPhotoUrl());
                 intent.putExtra(NAME, record.getExtraInfo());
                 startActivity(intent);
             }
@@ -102,6 +99,23 @@ public class MainActivity extends AppCompatActivity {
                 INTERVAL_TWO_MINUTES,
                 mNotificationReceiverPendingIntent);
 
+    }
+
+    private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST);
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    MY_PERMISSIONS_REQUEST);
+        }
     }
 
     /**

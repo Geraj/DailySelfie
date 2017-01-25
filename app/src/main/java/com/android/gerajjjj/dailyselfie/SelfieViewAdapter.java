@@ -67,10 +67,8 @@ public class SelfieViewAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-
         ImageView photo;
         TextView extraInfo;
-
     }
     public void add(SelfieRecord listItem) {
         list.add(listItem);

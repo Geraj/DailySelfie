@@ -18,11 +18,13 @@ public class ShowSelfieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_selfie);
         Intent intent = getIntent();
-        String url = intent.getStringExtra(MainActivity.URL);
+        String path = intent.getStringExtra(MainActivity.PATH);
         String name = intent.getStringExtra(MainActivity.NAME);
-        File f = new File(url);
+        File f = new File(path);
         Bitmap bitmap = BitmapFactory.decodeFile(f.getPath());
-        ImageView imageView = (ImageView)findViewById(R.id.selfie_image_view);
-        imageView.setImageBitmap(bitmap);
+        if (bitmap!=null) {
+            ImageView imageView = (ImageView) findViewById(R.id.selfie_image_view);
+            imageView.setImageBitmap(bitmap);
+        }
     }
 }
